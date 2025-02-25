@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>于洪茜我爱你 葛益楠./</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            font-size: 80px;
+            overflow: hidden;
+        }
+
+        .countdown {
+            position: absolute;
+        }
+
+        .message {
+            display: none;
+            color: #ff69b4;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .heart {
+            display: none;
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background-color: #ff1493;
+            transform: rotate(-45deg);
+            animation: heartbeat 1s infinite;
+            box-shadow: 0 0 50px #ff1493;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: #ff1493;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -50px;
+            left: 0;
+        }
+
+        .heart::after {
+            top: 0;
+            left: 50px;
+        }
+
+        .firework {
+            position: absolute;
+            /* 增大烟花粒子尺寸 */
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: fireworkParticleAnimation 1s ease-out forwards;
+        }
+
+        .meteor {
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+            animation: meteorAnimation 3s linear infinite;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: rotate(-45deg) scale(1);
+            }
+
+            25% {
+                transform: rotate(-45deg) scale(1.1);
+            }
+
+            50% {
+                transform: rotate(-45deg) scale(1);
+            }
+
+            75% {
+                transform: rotate(-45deg) scale(1.1);
+            }
+
+            100% {
+                transform: rotate(-45deg) scale(1);
+            }
+        }
+
+        @keyframes fireworkParticleAnimation {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(var(--x), var(--y)) scale(0.1);
+                opacity: 0;
+            }
+        }
+
+        @keyframes meteorAnimation {
+            0% {
+                top: -100px;
+                left: Math.random() * 100vw;
+                opacity: 1;
+            }
+
+            100% {
+                top: 100vh;
+                left: Math.random() * 100vw;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="countdown" id="countdown">3</div>
+<div class="message" id="message">爱你宝宝么么哒 mua</div>
+<div class="heart" id="heart"></div>
+<div id="fireworks"></div>
+<div id="meteors"></div>
+<audio id="fireworkSound" src="https://www.soundjay.com/explosion/explosion-02.wav" preload="auto"></audio>
+<script>
+    const countdownElement = document.getElementById('countdown');
+    const messageElement = document.getElementById('message');
+    const heartElement = document.getElementById('heart');
+    const fireworksElement = document.getElementById('fireworks');
+    const meteorsElement = document.getElementById('meteors');
+    const fireworkSound = document.getElementById('fireworkSound');
+
+    let count = 3;
+    const countdownInterval = setInterval(() => {
+        if (count > 0) {
+            countdownElement.textContent = count;
+            count--;
+        } else {
+            clearInterval(countdownInterval);
+            countdownElement.style.display = 'none';
+            messageElement.style.display = 'block';
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+                heartElement.style.display = 'block';
+                startFireworks();
+                startMeteors();
+            }, 2000);
+        }
+    }, 1000);
+
+    function startFireworks() {
+        // 缩短时间间隔，让烟花更频繁出现
+        setInterval(() => {
+            const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+
+            // 播放烟花音效
+            fireworkSound.currentTime = 0;
+            fireworkSound.play();
+
+            // 增加每个烟花的粒子数量
+            const numParticles = 300;
+            for (let i = 0; i < numParticles; i++) {
+                const firework = document.createElement('div');
+                firework.classList.add('firework');
+                firework.style.backgroundColor = color;
+                firework.style.left = x + 'px';
+                firework.style.top = y + 'px';
+
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.random() * 150;
+                const dx = Math.cos(angle) * distance;
+                const dy = Math.sin(angle) * distance;
+                firework.style.setProperty('--x', dx + 'px');
+                firework.style.setProperty('--y', dy + 'px');
+
+                // 随机动画延迟和持续时间
+                const delay = Math.random() * 0.2;
+                const duration = 0.8 + Math.random() * 0.4;
+                firework.style.animationDelay = delay + 's';
+                firework.style.animationDuration = duration + 's';
+
+                fireworksElement.appendChild(firework);
+                setTimeout(() => {
+                    firework.remove();
+                }, (delay + duration) * 1000);
+            }
+        }, 800);
+    }
+
+    function startMeteors() {
+        setInterval(() => {
+            const meteor = document.createElement('div');
+            meteor.classList.add('meteor');
+            meteor.style.left = Math.random() * 100 + 'vw';
+            meteorsElement.appendChild(meteor);
+            setTimeout(() => {
+                meteor.remove();
+            }, 3000);
+        }, 1000);
+    }
+</script>
+</body>
+
+</html>
