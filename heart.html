@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>于洪茜我爱你 葛益楠./</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #000;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 星星样式 */
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            animation: twinkle linear infinite;
+        }
+
+        /* 流星样式 */
+        .meteor {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            box-shadow: 0 0 10px white;
+            animation: meteor-fall linear;
+        }
+
+        @keyframes twinkle {
+            0% {
+                opacity: 0.2;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.2;
+            }
+        }
+
+        @keyframes meteor-fall {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(200px, 200px);
+                opacity: 0;
+            }
+        }
+
+        #countdown,
+        #message,
+        .heart-container {
+            font-size: 80px;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            z-index: 1;
+        }
+
+        .heart {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background-color: #ff0000;
+            transform: rotate(-45deg);
+            animation: heartbeat 1.2s infinite ease-in-out, colorChange 5s infinite;
+            box-shadow: 0 0 50px #ff0000;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: #ff0000;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -50px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: 50px;
+            top: 0;
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: rotate(-45deg) scale(1);
+            }
+            25% {
+                transform: rotate(-45deg) scale(1.1);
+            }
+            50% {
+                transform: rotate(-45deg) scale(1);
+            }
+            75% {
+                transform: rotate(-45deg) scale(1.1);
+            }
+            100% {
+                transform: rotate(-45deg) scale(1);
+            }
+        }
+
+        @keyframes colorChange {
+            0% {
+                background-color: #ff0000;
+            }
+            25% {
+                background-color: #ff7f00;
+            }
+            50% {
+                background-color: #ffff00;
+            }
+            75% {
+                background-color: #00ff00;
+            }
+            100% {
+                background-color: #ff0000;
+            }
+        }
+
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 20px #ff0000;
+            }
+            50% {
+                box-shadow: 0 0 50px #ff0000, 0 0 80px #ff0000;
+            }
+            100% {
+                box-shadow: 0 0 20px #ff0000;
+            }
+        }
+
+        .heart-container {
+            animation: glow 2s infinite;
+        }
+
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: white;
+            border-radius: 50%;
+            animation: firework-animation 0.5s linear infinite;
+        }
+
+        @keyframes firework-animation {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(10);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div id="countdown">3</div>
+<div id="message" style="display: none;">爱你老婆么么哒 mua</div>
+<div class="heart-container" style="display: none;">
+    <div class="heart"></div>
+</div>
+
+<script>
+    // 生成星星
+    const numStars = 200;
+    for (let i = 0; i < numStars; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        // 随机化星星大小
+        const size = Math.random() * 3 + 1;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        // 优化星星分布
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        star.style.left = x + 'px';
+        star.style.top = y + 'px';
+        // 随机化闪烁频率和幅度
+        const duration = Math.random() * 5 + 2;
+        const delay = Math.random() * 5;
+        star.style.animationDuration = duration + 's';
+        star.style.animationDelay = delay + 's';
+        document.body.appendChild(star);
+    }
+
+    // 生成流星
+    function createMeteor() {
+        const meteor = document.createElement('div');
+        meteor.classList.add('meteor');
+        const startX = Math.random() * window.innerWidth;
+        const startY = Math.random() * window.innerHeight;
+        meteor.style.left = startX + 'px';
+        meteor.style.top = startY + 'px';
+        const duration = Math.random() * 2 + 1;
+        meteor.style.animationDuration = duration + 's';
+        document.body.appendChild(meteor);
+        setTimeout(() => {
+            meteor.remove();
+        }, duration * 1000);
+    }
+
+    // 定时生成流星
+    setInterval(createMeteor, Math.random() * 5000 + 5000);
+
+    const countdownElement = document.getElementById('countdown');
+    const messageElement = document.getElementById('message');
+    const heartContainer = document.querySelector('.heart-container');
+
+    let count = 3;
+    const countdownInterval = setInterval(() => {
+        if (count > 0) {
+            countdownElement.textContent = count;
+            count--;
+        } else {
+            clearInterval(countdownInterval);
+            countdownElement.style.display = 'none';
+            messageElement.style.display = 'block';
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+                heartContainer.style.display = 'block';
+                startFireworks();
+            }, 2000);
+        }
+    }, 1000);
+
+    function startFireworks() {
+        const createFirework = () => {
+            const firework = document.createElement('div');
+            firework.classList.add('firework');
+            firework.style.left = Math.random() * window.innerWidth + 'px';
+            firework.style.top = Math.random() * window.innerHeight + 'px';
+            document.body.appendChild(firework);
+
+            setTimeout(() => {
+                firework.remove();
+            }, 1500);
+        };
+
+        const fireworkInterval = setInterval(createFirework, 500);
+
+        setTimeout(() => {
+            clearInterval(fireworkInterval);
+        }, 20000);
+    }
+</script>
+</body>
+
+</html>
