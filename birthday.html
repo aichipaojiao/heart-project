@@ -109,6 +109,36 @@
             color: #ff0000;
             z-index: 10;
         }
+
+        /* 增大流星尺寸 */
+        .meteor {
+            position: absolute;
+            width: 300px; /* 增大宽度 */
+            height: 6px;  /* 增大高度 */
+            background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+            animation: meteor 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes meteor {
+            0% {
+                transform: translateX(100vw) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-300px) translateY(100vh); /* 调整动画终点位置 */
+                opacity: 0;
+            }
+        }
+
+        /* 增大烟花粒子尺寸 */
+        .firework {
+            position: absolute;
+            width: 8px; /* 增大宽度 */
+            height: 8px; /* 增大高度 */
+            border-radius: 50%;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -116,13 +146,14 @@
 <div class="heart"></div>
 <div class="particles"></div>
 <div class="countdown">3</div>
-<div class="love-text">于洪茜 I LOVE YOU❤</div>
+<div class="love-text">爱你宝宝</div>
 
 <script>
     const particlesContainer = document.querySelector('.particles');
     const heart = document.querySelector('.heart');
     const countdownElement = document.querySelector('.countdown');
     const loveTextElement = document.querySelector('.love-text');
+    const body = document.body;
 
     function createParticle() {
         const particle = document.createElement('div');
@@ -160,6 +191,68 @@
         }, (duration + delay) * 1000);
     }
 
+    function createMeteor() {
+        const meteor = document.createElement('div');
+        meteor.classList.add('meteor');
+
+        const startX = -300 + Math.random() * (window.innerWidth + 300); /* 调整起始位置范围 */
+        const startY = -100 + Math.random() * 200;
+
+        meteor.style.left = `${startX}px`;
+        meteor.style.top = `${startY}px`;
+
+        const duration = Math.random() * 3 + 2;
+        meteor.style.animationDuration = `${duration}s`;
+
+        body.appendChild(meteor);
+
+        setTimeout(() => {
+            meteor.remove();
+        }, duration * 1000);
+    }
+
+    function createFirework() {
+        const fireworkCenterX = -100 + Math.random() * (window.innerWidth + 200);
+        const fireworkCenterY = -100 + Math.random() * (window.innerHeight + 200);
+
+        const numParticles = 100;
+        for (let i = 0; i < numParticles; i++) {
+            const firework = document.createElement('div');
+            firework.classList.add('firework');
+
+            const angle = Math.random() * 2 * Math.PI;
+            const distance = Math.random() * 150; /* 增大烟花粒子扩散距离 */
+            const targetX = fireworkCenterX + distance * Math.cos(angle);
+            const targetY = fireworkCenterY + distance * Math.sin(angle);
+
+            firework.style.left = `${fireworkCenterX}px`;
+            firework.style.top = `${fireworkCenterY}px`;
+
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            firework.style.backgroundColor = randomColor;
+
+            const duration = Math.random() * 1 + 0.5;
+            const delay = Math.random() * 0.2;
+
+            firework.animate([
+                { opacity: 1, transform: `translate(0, 0)` },
+                { opacity: 0, transform: `translate(${targetX - fireworkCenterX}px, ${targetY - fireworkCenterY}px)` }
+            ], {
+                duration: duration * 1000,
+                delay: delay * 1000,
+                iterations: 1,
+                easing: 'ease-out'
+            });
+
+            body.appendChild(firework);
+
+            setTimeout(() => {
+                firework.remove();
+            }, (duration + delay) * 1000);
+        }
+    }
+
     let countdown = 3;
     const countdownInterval = setInterval(() => {
         countdown--;
@@ -176,6 +269,8 @@
                 particlesContainer.style.display = 'block';
 
                 setInterval(createParticle, 30);
+                setInterval(createMeteor, 200);
+                setInterval(createFirework, 300);
 
                 setTimeout(() => {
                     heart.style.display = 'none';
