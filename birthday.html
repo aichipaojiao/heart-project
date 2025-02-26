@@ -110,34 +110,44 @@
             z-index: 10;
         }
 
-        /* 增大流星尺寸 */
         .meteor {
             position: absolute;
-            width: 300px; /* 增大宽度 */
-            height: 6px;  /* 增大高度 */
-            background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+            width: 6px;
+            height: 300px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
             animation: meteor 3s linear infinite;
             pointer-events: none;
+            filter: blur(1px);
         }
 
         @keyframes meteor {
             0% {
-                transform: translateX(100vw) translateY(0);
+                transform: translateY(-100%);
                 opacity: 1;
             }
             100% {
-                transform: translateX(-300px) translateY(100vh); /* 调整动画终点位置 */
+                transform: translateY(100vh);
                 opacity: 0;
             }
         }
 
-        /* 增大烟花粒子尺寸 */
         .firework {
             position: absolute;
-            width: 8px; /* 增大宽度 */
-            height: 8px; /* 增大高度 */
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             pointer-events: none;
+            filter: blur(1px);
+        }
+
+        .firework-trail {
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(1px);
         }
     </style>
 </head>
@@ -192,64 +202,141 @@
     }
 
     function createMeteor() {
-        const meteor = document.createElement('div');
-        meteor.classList.add('meteor');
+        // 增加每次生成流星的数量，随机生成 2 - 5 个流星
+        const meteorCount = Math.floor(Math.random() * 4) + 2;
+        for (let i = 0; i < meteorCount; i++) {
+            const meteor = document.createElement('div');
+            meteor.classList.add('meteor');
 
-        const startX = -300 + Math.random() * (window.innerWidth + 300); /* 调整起始位置范围 */
-        const startY = -100 + Math.random() * 200;
+            const startX = Math.random() * window.innerWidth;
+            const startY = -300;
 
-        meteor.style.left = `${startX}px`;
-        meteor.style.top = `${startY}px`;
+            meteor.style.left = `${startX}px`;
+            meteor.style.top = `${startY}px`;
 
-        const duration = Math.random() * 3 + 2;
-        meteor.style.animationDuration = `${duration}s`;
+            const duration = Math.random() * 3 + 2;
+            meteor.style.animationDuration = `${duration}s`;
 
-        body.appendChild(meteor);
+            body.appendChild(meteor);
 
-        setTimeout(() => {
-            meteor.remove();
-        }, duration * 1000);
+            // 流星尾迹效果
+            const trailDuration = duration * 0.8;
+            const trailCount = Math.floor(duration * 10);
+            for (let j = 0; j < trailCount; j++) {
+                const trail = document.createElement('div');
+                trail.classList.add('meteor-trail');
+                trail.style.left = `${startX}px`;
+                trail.style.top = `${startY + j * (300 / trailCount)}px`;
+                trail.style.backgroundColor = `rgba(255, 255, 255, ${(trailCount - j) / trailCount})`;
+                trail.animate([
+                    { opacity: 1, transform: 'translateY(0)' },
+                    { opacity: 0, transform: `translateY(${300}px)` }
+                ], {
+                    duration: trailDuration * 1000,
+                    delay: j * (duration * 100),
+                    iterations: 1,
+                    easing: 'linear'
+                });
+                body.appendChild(trail);
+                setTimeout(() => {
+                    trail.remove();
+                }, (trailDuration + j * (duration * 0.1)) * 1000);
+            }
+
+            setTimeout(() => {
+                meteor.remove();
+            }, duration * 1000);
+        }
     }
 
     function createFirework() {
-        const fireworkCenterX = -100 + Math.random() * (window.innerWidth + 200);
-        const fireworkCenterY = -100 + Math.random() * (window.innerHeight + 200);
+        // 增加每次生成烟花的组数，随机生成 2 - 3 组烟花
+        const fireworkGroupCount = Math.floor(Math.random() * 2) + 2;
+        for (let k = 0; k < fireworkGroupCount; k++) {
+            const fireworkCenterX = -100 + Math.random() * (window.innerWidth + 200);
+            const fireworkCenterY = -100 + Math.random() * (window.innerHeight + 200);
 
-        const numParticles = 100;
-        for (let i = 0; i < numParticles; i++) {
-            const firework = document.createElement('div');
-            firework.classList.add('firework');
-
-            const angle = Math.random() * 2 * Math.PI;
-            const distance = Math.random() * 150; /* 增大烟花粒子扩散距离 */
-            const targetX = fireworkCenterX + distance * Math.cos(angle);
-            const targetY = fireworkCenterY + distance * Math.sin(angle);
-
-            firework.style.left = `${fireworkCenterX}px`;
-            firework.style.top = `${fireworkCenterY}px`;
-
-            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            firework.style.backgroundColor = randomColor;
-
-            const duration = Math.random() * 1 + 0.5;
-            const delay = Math.random() * 0.2;
-
-            firework.animate([
-                { opacity: 1, transform: `translate(0, 0)` },
-                { opacity: 0, transform: `translate(${targetX - fireworkCenterX}px, ${targetY - fireworkCenterY}px)` }
+            // 烟花上升效果
+            const fireworkRocket = document.createElement('div');
+            fireworkRocket.classList.add('firework');
+            fireworkRocket.style.left = `${fireworkCenterX}px`;
+            fireworkRocket.style.top = `${window.innerHeight}px`;
+            const rocketColors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            const rocketColor = rocketColors[Math.floor(Math.random() * rocketColors.length)];
+            fireworkRocket.style.backgroundColor = rocketColor;
+            const rocketDuration = Math.random() * 2 + 1;
+            fireworkRocket.animate([
+                { transform: `translateY(0)` },
+                { transform: `translateY(-${window.innerHeight - fireworkCenterY}px)` }
             ], {
-                duration: duration * 1000,
-                delay: delay * 1000,
+                duration: rocketDuration * 1000,
                 iterations: 1,
                 easing: 'ease-out'
             });
+            body.appendChild(fireworkRocket);
 
-            body.appendChild(firework);
+            // 烟花尾迹效果
+            const rocketTrailCount = Math.floor(rocketDuration * 10);
+            for (let i = 0; i < rocketTrailCount; i++) {
+                const rocketTrail = document.createElement('div');
+                rocketTrail.classList.add('firework-trail');
+                rocketTrail.style.left = `${fireworkCenterX}px`;
+                rocketTrail.style.top = `${window.innerHeight - i * ((window.innerHeight - fireworkCenterY) / rocketTrailCount)}px`;
+                rocketTrail.style.backgroundColor = `rgba(255, 255, 255, ${(rocketTrailCount - i) / rocketTrailCount})`;
+                rocketTrail.animate([
+                    { opacity: 1, transform: 'translateY(0)' },
+                    { opacity: 0, transform: `translateY(${window.innerHeight - fireworkCenterY}px)` }
+                ], {
+                    duration: rocketDuration * 0.8 * 1000,
+                    delay: i * (rocketDuration * 0.1 * 1000),
+                    iterations: 1,
+                    easing: 'linear'
+                });
+                body.appendChild(rocketTrail);
+                setTimeout(() => {
+                    rocketTrail.remove();
+                }, (rocketDuration * 0.8 + i * (rocketDuration * 0.1)) * 1000);
+            }
 
             setTimeout(() => {
-                firework.remove();
-            }, (duration + delay) * 1000);
+                fireworkRocket.remove();
+                const numParticles = 100;
+                for (let i = 0; i < numParticles; i++) {
+                    const firework = document.createElement('div');
+                    firework.classList.add('firework');
+
+                    const angle = Math.random() * 2 * Math.PI;
+                    const distance = Math.random() * 150;
+                    const targetX = fireworkCenterX + distance * Math.cos(angle);
+                    const targetY = fireworkCenterY + distance * Math.sin(angle);
+
+                    firework.style.left = `${fireworkCenterX}px`;
+                    firework.style.top = `${fireworkCenterY}px`;
+
+                    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+                    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                    firework.style.backgroundColor = randomColor;
+
+                    const duration = Math.random() * 1 + 0.5;
+                    const delay = Math.random() * 0.2;
+
+                    firework.animate([
+                        { opacity: 1, transform: `translate(0, 0)` },
+                        { opacity: 0, transform: `translate(${targetX - fireworkCenterX}px, ${targetY - fireworkCenterY}px)` }
+                    ], {
+                        duration: duration * 1000,
+                        delay: delay * 1000,
+                        iterations: 1,
+                        easing: 'ease-out'
+                    });
+
+                    body.appendChild(firework);
+
+                    setTimeout(() => {
+                        firework.remove();
+                    }, (duration + delay) * 1000);
+                }
+            }, rocketDuration * 1000);
         }
     }
 
@@ -269,8 +356,10 @@
                 particlesContainer.style.display = 'block';
 
                 setInterval(createParticle, 30);
-                setInterval(createMeteor, 200);
-                setInterval(createFirework, 300);
+                // 进一步缩短流星生成间隔
+                setInterval(createMeteor, 50);
+                // 缩短烟花生成间隔
+                setInterval(createFirework, 150);
 
                 setTimeout(() => {
                     heart.style.display = 'none';
