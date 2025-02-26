@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -12,69 +12,32 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: #000;
+            background-color: #000;
+            color: #fff;
             font-family: Arial, sans-serif;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* 星星样式 */
-        .star {
-            position: absolute;
-            border-radius: 50%;
-            animation: twinkle linear infinite;
-        }
-
-        /* 流星样式 */
-        .meteor {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            box-shadow: 0 0 10px white;
-            animation: meteor-fall linear;
-        }
-
-        @keyframes twinkle {
-            0% {
-                opacity: 0.2;
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0.2;
-            }
-        }
-
-        @keyframes meteor-fall {
-            0% {
-                transform: translate(0, 0);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(200px, 200px);
-                opacity: 0;
-            }
-        }
-
-        #countdown,
-        #message,
-        .heart-container {
             font-size: 80px;
-            color: white;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-            z-index: 1;
+            overflow: hidden;
+        }
+
+        .countdown {
+            position: absolute;
+        }
+
+        .message {
+            display: none;
+            color: #ff69b4;
+            animation: fadeIn 2s ease-in-out;
         }
 
         .heart {
+            display: none;
             position: relative;
             width: 100px;
             height: 100px;
-            background-color: #ff0000;
+            background-color: #ff1493;
             transform: rotate(-45deg);
-            animation: heartbeat 1.2s infinite ease-in-out, colorChange 5s infinite;
-            box-shadow: 0 0 50px #ff0000;
+            animation: heartbeat 1s infinite;
+            box-shadow: 0 0 50px #ff1493;
         }
 
         .heart::before,
@@ -83,7 +46,7 @@
             position: absolute;
             width: 100px;
             height: 100px;
-            background-color: #ff0000;
+            background-color: #ff1493;
             border-radius: 50%;
         }
 
@@ -93,8 +56,46 @@
         }
 
         .heart::after {
-            left: 50px;
             top: 0;
+            left: 50px;
+        }
+
+        .firework {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: fireworkParticleAnimation 1s ease-out forwards;
+        }
+
+        .meteor {
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+            animation: meteorAnimation 3s linear infinite;
+        }
+
+        .rose {
+            display: none;
+            width: 400px; /* 增大玫瑰花尺寸 */
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: fadeInScale 1s ease-in-out forwards, sway 5s infinite alternate; /* 添加摆动动画 */
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5)); /* 添加阴影效果 */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes heartbeat {
@@ -115,114 +116,69 @@
             }
         }
 
-        @keyframes colorChange {
+        @keyframes fireworkParticleAnimation {
             0% {
-                background-color: #ff0000;
-            }
-            25% {
-                background-color: #ff7f00;
-            }
-            50% {
-                background-color: #ffff00;
-            }
-            75% {
-                background-color: #00ff00;
-            }
-            100% {
-                background-color: #ff0000;
-            }
-        }
-
-        @keyframes glow {
-            0% {
-                box-shadow: 0 0 20px #ff0000;
-            }
-            50% {
-                box-shadow: 0 0 50px #ff0000, 0 0 80px #ff0000;
-            }
-            100% {
-                box-shadow: 0 0 20px #ff0000;
-            }
-        }
-
-        .heart-container {
-            animation: glow 2s infinite;
-        }
-
-        .firework {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background-color: white;
-            border-radius: 50%;
-            animation: firework-animation 0.5s linear infinite;
-        }
-
-        @keyframes firework-animation {
-            0% {
-                transform: scale(1);
+                transform: translate(0, 0) scale(1);
                 opacity: 1;
             }
             100% {
-                transform: scale(10);
+                transform: translate(var(--x), var(--y)) scale(0.1);
                 opacity: 0;
+            }
+        }
+
+        @keyframes meteorAnimation {
+            0% {
+                top: -100px;
+                left: Math.random() * 100vw;
+                opacity: 1;
+            }
+            100% {
+                top: 100vh;
+                left: Math.random() * 100vw;
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        @keyframes sway {
+            0% {
+                transform: translate(-50%, -50%) rotate(-5deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(5deg);
             }
         }
     </style>
 </head>
 
 <body>
-<div id="countdown">3</div>
-<div id="message" style="display: none;">爱你老婆么么哒 mua</div>
-<div class="heart-container" style="display: none;">
-    <div class="heart"></div>
-</div>
-
+<div class="countdown" id="countdown">3</div>
+<div class="message" id="message">爱你宝宝么么哒 mua</div>
+<div class="heart" id="heart"></div>
+<div id="fireworks"></div>
+<div id="meteors"></div>
+<!-- 替换为有效的图片链接 -->
+<img class="rose" id="rose" src="https://example.com/your-rose-image.jpg" alt="Rose">
+<audio id="fireworkSound" src="https://www.soundjay.com/explosion/explosion-02.wav" preload="auto"></audio>
 <script>
-    // 生成星星
-    const numStars = 200;
-    for (let i = 0; i < numStars; i++) {
-        const star = document.createElement('div');
-        star.classList.add('star');
-        // 随机化星星大小
-        const size = Math.random() * 3 + 1;
-        star.style.width = size + 'px';
-        star.style.height = size + 'px';
-        // 优化星星分布
-        const x = Math.random() * window.innerWidth;
-        const y = Math.random() * window.innerHeight;
-        star.style.left = x + 'px';
-        star.style.top = y + 'px';
-        // 随机化闪烁频率和幅度
-        const duration = Math.random() * 5 + 2;
-        const delay = Math.random() * 5;
-        star.style.animationDuration = duration + 's';
-        star.style.animationDelay = delay + 's';
-        document.body.appendChild(star);
-    }
-
-    // 生成流星
-    function createMeteor() {
-        const meteor = document.createElement('div');
-        meteor.classList.add('meteor');
-        const startX = Math.random() * window.innerWidth;
-        const startY = Math.random() * window.innerHeight;
-        meteor.style.left = startX + 'px';
-        meteor.style.top = startY + 'px';
-        const duration = Math.random() * 2 + 1;
-        meteor.style.animationDuration = duration + 's';
-        document.body.appendChild(meteor);
-        setTimeout(() => {
-            meteor.remove();
-        }, duration * 1000);
-    }
-
-    // 定时生成流星
-    setInterval(createMeteor, Math.random() * 5000 + 5000);
-
     const countdownElement = document.getElementById('countdown');
     const messageElement = document.getElementById('message');
-    const heartContainer = document.querySelector('.heart-container');
+    const heartElement = document.getElementById('heart');
+    const fireworksElement = document.getElementById('fireworks');
+    const meteorsElement = document.getElementById('meteors');
+    const roseElement = document.getElementById('rose');
+    const fireworkSound = document.getElementById('fireworkSound');
 
     let count = 3;
     const countdownInterval = setInterval(() => {
@@ -235,30 +191,110 @@
             messageElement.style.display = 'block';
             setTimeout(() => {
                 messageElement.style.display = 'none';
-                heartContainer.style.display = 'block';
+                heartElement.style.display = 'block';
                 startFireworks();
+                startMeteors();
+                // 爱心跳动 5 秒后处理
+                setTimeout(() => {
+                    explodeHeart();
+                }, 5000);
             }, 2000);
         }
     }, 1000);
 
     function startFireworks() {
-        const createFirework = () => {
+        // 缩短时间间隔，让烟花更频繁出现
+        setInterval(() => {
+            const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+
+            fireworkSound.currentTime = 0;
+            fireworkSound.play();
+
+            const numParticles = 110; // 适当调整粒子数量
+            for (let i = 0; i < numParticles; i++) {
+                const firework = document.createElement('div');
+                firework.classList.add('firework');
+                firework.style.backgroundColor = color;
+                firework.style.left = x + 'px';
+                firework.style.top = y + 'px';
+
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.random() * 150;
+                const dx = Math.cos(angle) * distance;
+                const dy = Math.sin(angle) * distance;
+                firework.style.setProperty('--x', dx + 'px');
+                firework.style.setProperty('--y', dy + 'px');
+
+                const delay = Math.random() * 0.2;
+                const duration = 0.8 + Math.random() * 0.4;
+                firework.style.animationDelay = delay + 's';
+                firework.style.animationDuration = duration + 's';
+
+                fireworksElement.appendChild(firework);
+                setTimeout(() => {
+                    firework.remove();
+                }, (delay + duration) * 1000);
+            }
+        }, 300); // 缩短时间间隔
+    }
+
+    function startMeteors() {
+        // 缩短时间间隔，让流星更频繁出现
+        setInterval(() => {
+            const meteor = document.createElement('div');
+            meteor.classList.add('meteor');
+            meteor.style.left = Math.random() * 100 + 'vw';
+            meteorsElement.appendChild(meteor);
+            setTimeout(() => {
+                meteor.remove();
+            }, 3000);
+        }, 300); // 缩短时间间隔
+    }
+
+    function explodeHeart() {
+        // 隐藏爱心
+        heartElement.style.display = 'none';
+        // 模拟爱心爆炸成烟花效果
+        const heartX = heartElement.offsetLeft + heartElement.offsetWidth / 2;
+        const heartY = heartElement.offsetTop + heartElement.offsetHeight / 2;
+        const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080'];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+
+        fireworkSound.currentTime = 0;
+        fireworkSound.play();
+
+        const numParticles = 110; // 适当调整粒子数量
+        for (let i = 0; i < numParticles; i++) {
             const firework = document.createElement('div');
             firework.classList.add('firework');
-            firework.style.left = Math.random() * window.innerWidth + 'px';
-            firework.style.top = Math.random() * window.innerHeight + 'px';
-            document.body.appendChild(firework);
+            firework.style.backgroundColor = color;
+            firework.style.left = heartX + 'px';
+            firework.style.top = heartY + 'px';
 
+            const angle = Math.random() * 2 * Math.PI;
+            const distance = Math.random() * 150;
+            const dx = Math.cos(angle) * distance;
+            const dy = Math.sin(angle) * distance;
+            firework.style.setProperty('--x', dx + 'px');
+            firework.style.setProperty('--y', dy + 'px');
+
+            const delay = Math.random() * 0.2;
+            const duration = 0.8 + Math.random() * 0.4;
+            firework.style.animationDelay = delay + 's';
+            firework.style.animationDuration = duration + 's';
+
+            fireworksElement.appendChild(firework);
             setTimeout(() => {
                 firework.remove();
-            }, 1500);
-        };
-
-        const fireworkInterval = setInterval(createFirework, 500);
-
+            }, (delay + duration) * 1000);
+        }
+        // 显示玫瑰花
         setTimeout(() => {
-            clearInterval(fireworkInterval);
-        }, 20000);
+            roseElement.style.display = 'block';
+        }, 1000);
     }
 </script>
 </body>
