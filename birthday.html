@@ -25,6 +25,7 @@
             transform: rotate(-45deg);
             box-shadow: -10px 10px 90px #ff0000;
             animation: heart 0.6s linear infinite;
+            display: none;
         }
 
         @keyframes heart {
@@ -66,6 +67,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            display: none;
         }
 
         .particle {
@@ -86,16 +88,41 @@
             animation-timing-function: linear;
             animation-iteration-count: 1;
         }
+
+        .countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 100px;
+            color: #ff0000;
+            z-index: 10;
+        }
+
+        .love-text {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            color: #ff0000;
+            z-index: 10;
+        }
     </style>
 </head>
 
 <body>
 <div class="heart"></div>
 <div class="particles"></div>
+<div class="countdown">3</div>
+<div class="love-text">于洪茜 I LOVE YOU❤</div>
 
 <script>
     const particlesContainer = document.querySelector('.particles');
     const heart = document.querySelector('.heart');
+    const countdownElement = document.querySelector('.countdown');
+    const loveTextElement = document.querySelector('.love-text');
 
     function createParticle() {
         const particle = document.createElement('div');
@@ -133,48 +160,61 @@
         }, (duration + delay) * 1000);
     }
 
-    setInterval(createParticle, 30);
+    let countdown = 3;
+    const countdownInterval = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+            countdownElement.textContent = countdown;
+        } else {
+            clearInterval(countdownInterval);
+            countdownElement.style.display = 'none';
+            loveTextElement.style.display = 'block';
 
-    // 5 秒后隐藏爱心和颗粒，显示弹幕
-    setTimeout(() => {
-        heart.style.display = 'none';
-        particlesContainer.style.display = 'none';
+            setTimeout(() => {
+                loveTextElement.style.display = 'none';
+                heart.style.display = 'block';
+                particlesContainer.style.display = 'block';
 
-        // 生成更多弹幕元素，这里设置为 300 个
-        for (let i = 0; i < 300; i++) {
-            const danmaku = document.createElement('div');
-            danmaku.classList.add('danmaku');
-            danmaku.textContent = '于洪茜 I LOVE YOU❤';
+                setInterval(createParticle, 30);
 
-            // 随机设置起始位置
-            const startX = Math.random() > 0.5 ? -danmaku.offsetWidth : window.innerWidth;
-            const startY = Math.random() * window.innerHeight;
-            danmaku.style.left = `${startX}px`;
-            danmaku.style.top = `${startY}px`;
+                setTimeout(() => {
+                    heart.style.display = 'none';
+                    particlesContainer.style.display = 'none';
 
-            // 随机设置动画持续时间，范围缩短让速度更快
-            const duration = Math.random() * 5 + 3;
-            danmaku.style.animationDuration = `${duration}s`;
+                    for (let i = 0; i < 300; i++) {
+                        const danmaku = document.createElement('div');
+                        danmaku.classList.add('danmaku');
+                        danmaku.textContent = '于洪茜 I LOVE YOU❤';
 
-            // 设置动画方向
-            const direction = startX < 0 ? 'right' : 'left';
-            const keyframes = direction === 'right' ? [
-                { transform: `translateX(0)` },
-                { transform: `translateX(${window.innerWidth + danmaku.offsetWidth}px)` }
-            ] : [
-                { transform: `translateX(0)` },
-                { transform: `translateX(-${window.innerWidth + danmaku.offsetWidth}px)` }
-            ];
+                        const startX = Math.random() > 0.5 ? -danmaku.offsetWidth : window.innerWidth;
+                        const startY = Math.random() * window.innerHeight;
+                        danmaku.style.left = `${startX}px`;
+                        danmaku.style.top = `${startY}px`;
 
-            danmaku.animate(keyframes, {
-                duration: duration * 1000,
-                iterations: 1,
-                easing: 'linear'
-            });
+                        const duration = Math.random() * 6 + 4;
+                        danmaku.style.animationDuration = `${duration}s`;
 
-            document.body.appendChild(danmaku);
+                        const direction = startX < 0 ? 'right' : 'left';
+                        const keyframes = direction === 'right' ? [
+                            { transform: `translateX(0)` },
+                            { transform: `translateX(${window.innerWidth + danmaku.offsetWidth}px)` }
+                        ] : [
+                            { transform: `translateX(0)` },
+                            { transform: `translateX(-${window.innerWidth + danmaku.offsetWidth}px)` }
+                        ];
+
+                        danmaku.animate(keyframes, {
+                            duration: duration * 1000,
+                            iterations: 1,
+                            easing: 'linear'
+                        });
+
+                        document.body.appendChild(danmaku);
+                    }
+                }, 5000);
+            }, 2000);
         }
-    }, 5000);
+    }, 1000);
 </script>
 </body>
 
