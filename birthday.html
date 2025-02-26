@@ -202,8 +202,8 @@
     }
 
     function createMeteor() {
-        // 增加每次生成流星的数量，随机生成 2 - 5 个流星
-        const meteorCount = Math.floor(Math.random() * 4) + 2;
+        // 减少每次生成流星的数量，随机生成 1 - 2 个流星
+        const meteorCount = Math.floor(Math.random() * 3) + 2;
         for (let i = 0; i < meteorCount; i++) {
             const meteor = document.createElement('div');
             meteor.classList.add('meteor');
@@ -250,7 +250,7 @@
     }
 
     function createFirework() {
-        // 增加每次生成烟花的组数，随机生成 2 - 3 组烟花
+        // 减少每次生成烟花的组数，随机生成 1 组烟花
         const fireworkGroupCount = Math.floor(Math.random() * 2) + 2;
         for (let k = 0; k < fireworkGroupCount; k++) {
             const fireworkCenterX = -100 + Math.random() * (window.innerWidth + 200);
@@ -356,10 +356,10 @@
                 particlesContainer.style.display = 'block';
 
                 setInterval(createParticle, 30);
-                // 进一步缩短流星生成间隔
-                setInterval(createMeteor, 50);
-                // 缩短烟花生成间隔
-                setInterval(createFirework, 150);
+                // 增加流星生成间隔
+                setInterval(createMeteor, 1000);
+                // 增加烟花生成间隔
+                setInterval(createFirework, 3000);
 
                 setTimeout(() => {
                     heart.style.display = 'none';
